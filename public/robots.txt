@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: http://93.177.64.67/sitemap.xml

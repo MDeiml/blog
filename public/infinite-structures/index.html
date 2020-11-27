@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title>Blog</title>
+
+      
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="http://93.177.64.67/atom.xml">
+      
+
+      
+          <link rel="stylesheet" href="http://93.177.64.67/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="http:&#x2F;&#x2F;93.177.64.67">
+                                <span itemprop="name">Home
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="http:&#x2F;&#x2F;93.177.64.67&#x2F;about&#x2F;">
+                                <span itemprop="name">About
+                                </span></a>
+                        
+                        </nav>
+                        <span class="logo">     _
+ ___(")
+(____/ </span>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Generating infinite structures</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>3 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2020-11-07
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>If you have ever done anything with procedural generation, you have probably heard of <a href="https://en.wikipedia.org/wiki/Perlin_noise">Perlin noise</a> (or the a bit more modern <a href="https://en.wikipedia.org/wiki/Simplex_noise">Simplex noise</a>).
+These are very usefull for creating infinite continuous things like landscapes or natural textures.
+And by infinite I mean truly infinite, which I categorize by two things:</p>
+<ol>
+<li>The output is independent of the order in which you generate things</li>
+<li>You can look at any point in space and compute your output in constant time</li>
+</ol>
+<p>It should be obvious that every procedural world should have these properties, but it may be less obvious why this is a hard thing to achieve.</p>
+<span id="continue-reading"></span><h3 id="the-problem">The problem</h3>
+<p>Take a look at the following example:
+You want to fill a space with rectangles that do not overlap. They do not necessarily have to cover the whole space, but there should not be any obvious pattern.
+If the space you are filling is finite this is an easy task.
+Just randomly place rectangles and remove overlapping ones.</p>
+<p><canvas id="canvas_finite" width="400" height="400"><noscript><img src="finite.png" /><div class="alert alert-warning">You can run these examples if you turn on javascript</div></noscript></canvas></p>
+<script>// seedrandom
+!function(f,a,c){var s,l=256,p="random",d=c.pow(l,6),g=c.pow(2,52),y=2*g,h=l-1;function n(n,t,r){function e(){for(var n=u.g(6),t=d,r=0;n<g;)n=(n+r)*l,t*=l,r=u.g(1);for(;y<=n;)n/=2,t/=2,r>>>=1;return(n+r)/t}var o=[],i=j(function n(t,r){var e,o=[],i=typeof t;if(r&&"object"==i)for(e in t)try{o.push(n(t[e],r-1))}catch(n){}return o.length?o:"string"==i?t:t+"\0"}((t=1==t?{entropy:!0}:t||{}).entropy?[n,S(a)]:null==n?function(){try{var n;return s&&(n=s.randomBytes)?n=n(l):(n=new Uint8Array(l),(f.crypto||f.msCrypto).getRandomValues(n)),S(n)}catch(n){var t=f.navigator,r=t&&t.plugins;return[+new Date,f,r,f.screen,S(a)]}}():n,3),o),u=new m(o);return e.int32=function(){return 0|u.g(4)},e.quick=function(){return u.g(4)/4294967296},e.double=e,j(S(u.S),a),(t.pass||r||function(n,t,r,e){return e&&(e.S&&v(e,u),n.state=function(){return v(u,{})}),r?(c[p]=n,t):n})(e,i,"global"in t?t.global:this==c,t.state)}function m(n){var t,r=n.length,u=this,e=0,o=u.i=u.j=0,i=u.S=[];for(r||(n=[r++]);e<l;)i[e]=e++;for(e=0;e<l;e++)i[e]=i[o=h&o+n[e%r]+(t=i[e])],i[o]=t;(u.g=function(n){for(var t,r=0,e=u.i,o=u.j,i=u.S;n--;)t=i[e=h&e+1],r=r*l+i[h&(i[e]=i[o=h&o+t])+(i[o]=t)];return u.i=e,u.j=o,r})(l)}function v(n,t){return t.i=n.i,t.j=n.j,t.S=n.S.slice(),t}function j(n,t){for(var r,e=n+"",o=0;o<e.length;)t[h&o]=h&(r^=19*t[h&o])+e.charCodeAt(o++);return S(t)}function S(n){return String.fromCharCode.apply(0,n)}if(j(c.random(),a),"object"==typeof module&&module.exports){module.exports=n;try{s=require("crypto")}catch(n){}}else"function"==typeof define&&define.amd?define(function(){return n}):c["seed"+p]=n}("undefined"!=typeof self?self:this,[],Math);
+
+let N = 300;
+let WIDTH = 400;
+let HEIGHT = 400;
+let MAX_SIZE = 40;
+let SEED = Math.random();
+
+// ---
+function generateCell(seed) {
+    // this code uses https://github.com/davidbau/seedrandom
+    let random = new Math.seedrandom(seed);
+    let rectangles = [];
+
+    for (let i = 0; i < N; i++) {
+        // generate a random rectangle
+        let x = random() * WIDTH;
+        let y = random() * HEIGHT;
+        let w = random() * MAX_SIZE;
+        let h = random() * MAX_SIZE;
+
+        let intersecting = false;
+        for (let j = 0; j < rectangles.length; j++) {
+            let r = rectangles[j];
+
+            // test if rectangles intersect
+            if (x <= r.x + r.w && x + w >= r.x &&
+                y <= r.y + r.h && y + h >= r.y) {
+                intersecting = true;
+                break;
+            }
+        }
+        if (!intersecting) {
+            rectangles.push({x, y, w, h});
+        }
+    }
+
+    return rectangles;
+}
+// ---
+
+window.addEventListener('load', function() {
+    let rectangles = generateCell(Math.random());
+    let canvas = document.getElementById("canvas_finite");
+    let c = canvas.getContext("2d");
+
+    c.fillStyle = "#888";
+
+    for (let i = 0; i < rectangles.length; i++) {
+        let r = rectangles[i];
+        c.fillRect(
+            Math.floor(r.x),
+            Math.floor(r.y),
+            Math.floor(r.w),
+            Math.floor(r.h));
+    }
+});
+</script>
+<pre style="background-color:#000000;">
+<code><span style="color:#ff2e88;">function </span><span style="color:#cccccc;">generateCell(seed) {
+    </span><span style="color:#888888;">// this code uses https://github.com/davidbau/seedrandom
+    </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">random </span><span style="color:#ff2e88;">= new </span><span style="color:#00bcd4;">Math</span><span style="color:#cccccc;">.seedrandom(seed);
+    </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">rectangles </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">[];
+
+    </span><span style="color:#ff2e88;">for </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">i </span><span style="color:#ff2e88;">= </span><span style="color:#ff9800;">0</span><span style="color:#cccccc;">; i </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">N; i</span><span style="color:#ff2e88;">++</span><span style="color:#cccccc;">) {
+        </span><span style="color:#888888;">// generate a random rectangle
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">x </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">random() </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">WIDTH;
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">y </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">random() </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">HEIGHT;
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">w </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">random() </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">MAX_SIZE;
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">h </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">random() </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">MAX_SIZE;
+
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">intersecting </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">false;
+        </span><span style="color:#ff2e88;">for </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">j </span><span style="color:#ff2e88;">= </span><span style="color:#ff9800;">0</span><span style="color:#cccccc;">; j </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">rectangles.length; j</span><span style="color:#ff2e88;">++</span><span style="color:#cccccc;">) {
+            </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">r </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">rectangles[j];
+
+            </span><span style="color:#888888;">// test if rectangles intersect
+            </span><span style="color:#ff2e88;">if </span><span style="color:#cccccc;">(x </span><span style="color:#ff2e88;">&lt;= </span><span style="color:#cccccc;">r.x </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r.w </span><span style="color:#ff2e88;">&amp;&amp; </span><span style="color:#cccccc;">x </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">w </span><span style="color:#ff2e88;">&gt;= </span><span style="color:#cccccc;">r.x </span><span style="color:#ff2e88;">&amp;&amp;
+                </span><span style="color:#cccccc;">y </span><span style="color:#ff2e88;">&lt;= </span><span style="color:#cccccc;">r.y </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r.h </span><span style="color:#ff2e88;">&amp;&amp; </span><span style="color:#cccccc;">y </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">h </span><span style="color:#ff2e88;">&gt;= </span><span style="color:#cccccc;">r.y) {
+                intersecting </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">true;
+                </span><span style="color:#ff2e88;">break</span><span style="color:#cccccc;">;
+            }
+        }
+        </span><span style="color:#ff2e88;">if </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">!</span><span style="color:#cccccc;">intersecting) {
+            rectangles.push({x, y, w, h});
+        }
+    }
+
+    </span><span style="color:#ff2e88;">return </span><span style="color:#cccccc;">rectangles;
+}
+</span></code></pre>
+<p>However this method does not naively extend to infinite spaces.
+You could divide the world into cells and generate each cell independently with each rectangle lying completely in one cell, but this creates a pretty obvious pattern at the border of the cells.</p>
+<p><canvas id="canvas_naive" width="400" height="400"><noscript><img src="naive.png" /></noscript></canvas></p>
+<script>// ---
+function generateNaive(x, y) {
+    let rectangles = generateCell(x + "," + y + "," + SEED);
+    let output = [];
+    for (let i = 0; i < rectangles.length; i++) {
+        let r = rectangles[i];
+
+        // remove the rectangles that overlap the border
+        if (r.x + r.w < WIDTH && r.y + r.h < HEIGHT) {
+            // translate the rectangle by the cell position
+            output.push({
+                x: r.x + WIDTH * x,
+                y: r.y + HEIGHT * y,
+                w: r.w,
+                h: r.h
+            });
+        }
+    }
+    return output;
+}
+// ---
+
+window.addEventListener('load', function() {
+    WIDTH = 100;
+    HEIGHT = 100;
+    N = 100;
+
+    let rectangles = [];
+    for (let x = 0; x < 4; x++) {
+        for (let y = 0; y < 4; y++) {
+            rectangles = rectangles.concat(generateNaive(x, y));
+        }
+    }
+
+    let canvas = document.getElementById("canvas_naive");
+    let c = canvas.getContext("2d");
+
+    c.fillStyle = "#888";
+
+    for (let i = 0; i < rectangles.length; i++) {
+        let r = rectangles[i];
+        c.fillRect(
+            Math.floor(r.x),
+            Math.floor(r.y),
+            Math.floor(r.w),
+            Math.floor(r.h));
+    }
+});
+</script>
+<pre style="background-color:#000000;">
+<code><span style="color:#ff2e88;">function </span><span style="color:#cccccc;">generateNaive(x, y) {
+    </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">rectangles </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">generateCell(x </span><span style="color:#ff2e88;">+ </span><span style="color:#ff9800;">&quot;,&quot; </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">y </span><span style="color:#ff2e88;">+ </span><span style="color:#ff9800;">&quot;,&quot; </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">SEED);
+    </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">output </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">[];
+    </span><span style="color:#ff2e88;">for </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">i </span><span style="color:#ff2e88;">= </span><span style="color:#ff9800;">0</span><span style="color:#cccccc;">; i </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">rectangles.length; i</span><span style="color:#ff2e88;">++</span><span style="color:#cccccc;">) {
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">r </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">rectangles[i];
+
+        </span><span style="color:#888888;">// remove the rectangles that overlap the border
+        </span><span style="color:#ff2e88;">if </span><span style="color:#cccccc;">(r.x </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r.w </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">WIDTH </span><span style="color:#ff2e88;">&amp;&amp; </span><span style="color:#cccccc;">r.y </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r.h </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">HEIGHT) {
+            </span><span style="color:#888888;">// translate the rectangle by the cell position
+            </span><span style="color:#cccccc;">output.push({
+                x: r.x </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">WIDTH </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">x,
+                y: r.y </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">HEIGHT </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">y,
+                w: r.w,
+                h: r.h
+            });
+        }
+    }
+    </span><span style="color:#ff2e88;">return </span><span style="color:#cccccc;">output;
+}
+</span></code></pre>
+<p>Another method might be letting the rectangles overlap the cell borders and testing intersections with every previously generated cell, but this violates rule 1 as you can get different results based on which cell you generate first.</p>
+<p><canvas id="canvas_ordered" width="630" height="300"><noscript><img src="ordered.png"></noscript></canvas></p>
+<script>// ---
+function generateOrdered(x, y, rectangles) {
+    let cell = generateCell(x + "," + y + "," + SEED);
+    for (let i = 0; i < cell.length; i++) {
+        let r1 = cell[i];
+
+        // translate the rectangle by the cell position
+        r1.x += x * WIDTH;
+        r1.y += y * HEIGHT;
+
+        // test if new rectangles overlaps any previous one
+        // (I know this can be done more efficiently)
+        let intersecting = false;
+        for (let j = 0; j < rectangles.length; j++) {
+            let r2 = rectangles[j];
+
+            if (r1.x <= r2.x + r2.w && r1.x + r1.w >= r2.x &&
+                r1.y <= r2.y + r2.h && r1.y + r1.h >= r2.y) {
+                intersecting = true;
+                break;
+            }
+        }
+
+        if (!intersecting) {
+            rectangles.push(r1);
+        }
+    }
+}
+// ---
+
+window.addEventListener('load', function() {
+    WIDTH = 150;
+    HEIGHT = 150;
+    N = 40;
+    MAX_SIZE = 100;
+
+    let canvas = document.getElementById("canvas_ordered");
+    let c = canvas.getContext("2d");
+
+    c.fillStyle = "#888";
+
+    let state = 0;
+    let rectangles1 = [];
+    let rectangles2 = [];
+
+    function draw() {
+
+        for (let i = 0; i < rectangles1.length; i++) {
+            let r = rectangles1[i];
+            r.w = Math.min(r.w, 2 * WIDTH - r.x);
+            c.fillRect(
+                Math.floor(r.x),
+                Math.floor(r.y),
+                Math.floor(r.w),
+                Math.floor(r.h));
+        }
+
+
+        for (let i = 0; i < rectangles2.length; i++) {
+            let r = rectangles2[i];
+            c.fillRect(
+                Math.floor(r.x) + 2 * WIDTH + 30,
+                Math.floor(r.y),
+                Math.floor(r.w),
+                Math.floor(r.h));
+        }
+
+    }
+
+    function tick() {
+        switch (state) {
+            case 0:
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                SEED = Math.random();
+                rectangles1 = [];
+                rectangles2 = [];
+                generateOrdered(0, 0, rectangles1);
+                generateOrdered(0, 0, rectangles2);
+                break;
+            case 1:
+                generateOrdered(1, 0, rectangles1);
+                generateOrdered(0, 1, rectangles2);
+                break;
+            case 2:
+                generateOrdered(1, 1, rectangles1);
+                generateOrdered(1, 1, rectangles2);
+                break;
+            case 3:
+                generateOrdered(0, 1, rectangles1);
+                generateOrdered(1, 0, rectangles2);
+                break;
+        }
+        draw();
+        if (state == 3) {
+            state = 0;
+            setTimeout(tick, 3000);
+        } else {
+            state++;
+            setTimeout(tick, 1000);
+        }
+    }
+
+    tick();
+});
+
+</script>
+<pre style="background-color:#000000;">
+<code><span style="color:#ff2e88;">function </span><span style="color:#cccccc;">generateOrdered(x, y, rectangles) {
+    </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">cell </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">generateCell(x </span><span style="color:#ff2e88;">+ </span><span style="color:#ff9800;">&quot;,&quot; </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">y </span><span style="color:#ff2e88;">+ </span><span style="color:#ff9800;">&quot;,&quot; </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">SEED);
+    </span><span style="color:#ff2e88;">for </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">i </span><span style="color:#ff2e88;">= </span><span style="color:#ff9800;">0</span><span style="color:#cccccc;">; i </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">cell.length; i</span><span style="color:#ff2e88;">++</span><span style="color:#cccccc;">) {
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">r1 </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">cell[i];
+
+        </span><span style="color:#888888;">// translate the rectangle by the cell position
+        </span><span style="color:#cccccc;">r1.x </span><span style="color:#ff2e88;">+= </span><span style="color:#cccccc;">x </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">WIDTH;
+        r1.y </span><span style="color:#ff2e88;">+= </span><span style="color:#cccccc;">y </span><span style="color:#ff2e88;">* </span><span style="color:#cccccc;">HEIGHT;
+
+        </span><span style="color:#888888;">// test if new rectangles overlaps any previous one
+        // (I know this can be done more efficiently)
+        </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">intersecting </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">false;
+        </span><span style="color:#ff2e88;">for </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">j </span><span style="color:#ff2e88;">= </span><span style="color:#ff9800;">0</span><span style="color:#cccccc;">; j </span><span style="color:#ff2e88;">&lt; </span><span style="color:#cccccc;">rectangles.length; j</span><span style="color:#ff2e88;">++</span><span style="color:#cccccc;">) {
+            </span><span style="color:#ff2e88;">let </span><span style="color:#cccccc;">r2 </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">rectangles[j];
+
+            </span><span style="color:#ff2e88;">if </span><span style="color:#cccccc;">(r1.x </span><span style="color:#ff2e88;">&lt;= </span><span style="color:#cccccc;">r2.x </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r2.w </span><span style="color:#ff2e88;">&amp;&amp; </span><span style="color:#cccccc;">r1.x </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r1.w </span><span style="color:#ff2e88;">&gt;= </span><span style="color:#cccccc;">r2.x </span><span style="color:#ff2e88;">&amp;&amp;
+                </span><span style="color:#cccccc;">r1.y </span><span style="color:#ff2e88;">&lt;= </span><span style="color:#cccccc;">r2.y </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r2.h </span><span style="color:#ff2e88;">&amp;&amp; </span><span style="color:#cccccc;">r1.y </span><span style="color:#ff2e88;">+ </span><span style="color:#cccccc;">r1.h </span><span style="color:#ff2e88;">&gt;= </span><span style="color:#cccccc;">r2.y) {
+                intersecting </span><span style="color:#ff2e88;">= </span><span style="color:#cccccc;">true;
+                </span><span style="color:#ff2e88;">break</span><span style="color:#cccccc;">;
+            }
+        }
+
+        </span><span style="color:#ff2e88;">if </span><span style="color:#cccccc;">(</span><span style="color:#ff2e88;">!</span><span style="color:#cccccc;">intersecting) {
+            rectangles.push(r1);
+        }
+    }
+}
+</span></code></pre>
+<p>Finally one could solve this problem by defining an order in which the cells get generated (e.g. from the origin outwards). This violates rule 2 as cells that lie far away from the origin would take forever to generate, but it turns out that this approach can be modified to comply with rule 2.</p>
+<h3 id="approach-1">Approach 1</h3>
+<p>Instead of having a total ordering one can generate cells in a sort of checkerboard pattern. This means cells get computed in 4 steps (8 for the 3D case).</p>
+<center><pre>
+0 1 0 1 0
+2 3 2 3 2
+0 1 0 1 0
+2 3 2 3 2
+0 1 0 1 0
+</pre></center>
+<p>Each rectangle only needs to check for interesctions with neighbouring cells, which by definition of the pattern are not generated in the same step. As a result of this the output of a cell only depends on a finite ammount of cells to be generated previously and the algorithm runs in constant time.</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                
+                    and tagged
+                    
+                        <a href="http://93.177.64.67/tags/procedural-generation/">procedural generation</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

@@ -1,0 +1,22 @@
+base_url = "http://93.177.64.67"
+title = "Blog"
+
+theme = "after-dark"
+highlight_theme = "after-dark"
+
+taxonomies = [
+    # {name = "categories", rss = true},
+    {name = "tags", rss = true}
+]
+
+compile_sass = true
+highlight_code = true
+build_search_index = false
+generate_feed = true
+
+[extra]
+after_dark_menu = [
+    {url = "$BASE_URL", name = "Home"},
+    {url = "$BASE_URL/about/", name = "About"}
+]
+after_dark_title = "Blog"

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title>Blog</title>
+	<link href="http://93.177.64.67/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="http://93.177.64.67"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2020-11-07T00:00:00+00:00</updated>
+	<id>http://93.177.64.67/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Generating infinite structures</title>
+		<published>2020-11-07T00:00:00+00:00</published>
+		<updated>2020-11-07T00:00:00+00:00</updated>
+		<link href="http://93.177.64.67/infinite-structures/" type="text/html"/>
+		<id>http://93.177.64.67/infinite-structures/</id>
+		<content type="html">&lt;p&gt;If you have ever done anything with procedural generation, you have probably heard of &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Perlin_noise&quot;&gt;Perlin noise&lt;&#x2F;a&gt; (or the a bit more modern &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Simplex_noise&quot;&gt;Simplex noise&lt;&#x2F;a&gt;).
+These are very usefull for creating infinite continuous things like landscapes or natural textures.
+And by infinite I mean truly infinite, which I categorize by two things:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;The output is independent of the order in which you generate things&lt;&#x2F;li&gt;
+&lt;li&gt;You can look at any point in space and compute your output in constant time&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;It should be obvious that every procedural world should have these properties, but it may be less obvious why this is a hard thing to achieve.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;h3 id=&quot;the-problem&quot;&gt;The problem&lt;&#x2F;h3&gt;
+&lt;p&gt;Take a look at the following example:
+You want to fill a space with rectangles that do not overlap. They do not necessarily have to cover the whole space, but there should not be any obvious pattern.
+If the space you are filling is finite this is an easy task.
+Just randomly place rectangles and remove overlapping ones.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;canvas id=&quot;canvas_finite&quot; width=&quot;400&quot; height=&quot;400&quot;&gt;&lt;noscript&gt;&lt;img src=&quot;finite.png&quot; &#x2F;&gt;&lt;div class=&quot;alert alert-warning&quot;&gt;You can run these examples if you turn on javascript&lt;&#x2F;div&gt;&lt;&#x2F;noscript&gt;&lt;&#x2F;canvas&gt;&lt;&#x2F;p&gt;
+&lt;script&gt;&#x2F;&#x2F; seedrandom
+!function(f,a,c){var s,l=256,p=&quot;random&quot;,d=c.pow(l,6),g=c.pow(2,52),y=2*g,h=l-1;function n(n,t,r){function e(){for(var n=u.g(6),t=d,r=0;n&lt;g;)n=(n+r)*l,t*=l,r=u.g(1);for(;y&lt;=n;)n&#x2F;=2,t&#x2F;=2,r&gt;&gt;&gt;=1;return(n+r)&#x2F;t}var o=[],i=j(function n(t,r){var e,o=[],i=typeof t;if(r&amp;&amp;&quot;object&quot;==i)for(e in t)try{o.push(n(t[e],r-1))}catch(n){}return o.length?o:&quot;string&quot;==i?t:t+&quot;\0&quot;}((t=1==t?{entropy:!0}:t||{}).entropy?[n,S(a)]:null==n?function(){try{var n;return s&amp;&amp;(n=s.randomBytes)?n=n(l):(n=new Uint8Array(l),(f.crypto||f.msCrypto).getRandomValues(n)),S(n)}catch(n){var t=f.navigator,r=t&amp;&amp;t.plugins;return[+new Date,f,r,f.screen,S(a)]}}():n,3),o),u=new m(o);return e.int32=function(){return 0|u.g(4)},e.quick=function(){return u.g(4)&#x2F;4294967296},e.double=e,j(S(u.S),a),(t.pass||r||function(n,t,r,e){return e&amp;&amp;(e.S&amp;&amp;v(e,u),n.state=function(){return v(u,{})}),r?(c[p]=n,t):n})(e,i,&quot;global&quot;in t?t.global:this==c,t.state)}function m(n){var t,r=n.length,u=this,e=0,o=u.i=u.j=0,i=u.S=[];for(r||(n=[r++]);e&lt;l;)i[e]=e++;for(e=0;e&lt;l;e++)i[e]=i[o=h&amp;o+n[e%r]+(t=i[e])],i[o]=t;(u.g=function(n){for(var t,r=0,e=u.i,o=u.j,i=u.S;n--;)t=i[e=h&amp;e+1],r=r*l+i[h&amp;(i[e]=i[o=h&amp;o+t])+(i[o]=t)];return u.i=e,u.j=o,r})(l)}function v(n,t){return t.i=n.i,t.j=n.j,t.S=n.S.slice(),t}function j(n,t){for(var r,e=n+&quot;&quot;,o=0;o&lt;e.length;)t[h&amp;o]=h&amp;(r^=19*t[h&amp;o])+e.charCodeAt(o++);return S(t)}function S(n){return String.fromCharCode.apply(0,n)}if(j(c.random(),a),&quot;object&quot;==typeof module&amp;&amp;module.exports){module.exports=n;try{s=require(&quot;crypto&quot;)}catch(n){}}else&quot;function&quot;==typeof define&amp;&amp;define.amd?define(function(){return n}):c[&quot;seed&quot;+p]=n}(&quot;undefined&quot;!=typeof self?self:this,[],Math);
+
+let N = 300;
+let WIDTH = 400;
+let HEIGHT = 400;
+let MAX_SIZE = 40;
+let SEED = Math.random();
+
+&#x2F;&#x2F; ---
+function generateCell(seed) {
+    &#x2F;&#x2F; this code uses https:&#x2F;&#x2F;github.com&#x2F;davidbau&#x2F;seedrandom
+    let random = new Math.seedrandom(seed);
+    let rectangles = [];
+
+    for (let i = 0; i &lt; N; i++) {
+        &#x2F;&#x2F; generate a random rectangle
+        let x = random() * WIDTH;
+        let y = random() * HEIGHT;
+        let w = random() * MAX_SIZE;
+        let h = random() * MAX_SIZE;
+
+        let intersecting = false;
+        for (let j = 0; j &lt; rectangles.length; j++) {
+            let r = rectangles[j];
+
+            &#x2F;&#x2F; test if rectangles intersect
+            if (x &lt;= r.x + r.w &amp;&amp; x + w &gt;= r.x &amp;&amp;
+                y &lt;= r.y + r.h &amp;&amp; y + h &gt;= r.y) {
+                intersecting = true;
+                break;
+            }
+        }
+        if (!intersecting) {
+            rectangles.push({x, y, w, h});
+        }
+    }
+
+    return rectangles;
+}
+&#x2F;&#x2F; ---
+
+window.addEventListener(&#x27;load&#x27;, function() {
+    let rectangles = generateCell(Math.random());
+    let canvas = document.getElementById(&quot;canvas_finite&quot;);
+    let c = canvas.getContext(&quot;2d&quot;);
+
+    c.fillStyle = &quot;#888&quot;;
+
+    for (let i = 0; i &lt; rectangles.length; i++) {
+        let r = rectangles[i];
+        c.fillRect(
+            Math.floor(r.x),
+            Math.floor(r.y),
+            Math.floor(r.w),
+            Math.floor(r.h));
+    }
+});
+&lt;&#x2F;script&gt;
+&lt;pre style=&quot;background-color:#000000;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;generateCell(seed) {
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; this code uses https:&#x2F;&#x2F;github.com&#x2F;davidbau&#x2F;seedrandom
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;random &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;color:#00bcd4;&quot;&gt;Math&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;.seedrandom(seed);
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;[];
+
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;N; i&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;) {
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; generate a random rectangle
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;random() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;WIDTH;
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;random() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;HEIGHT;
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;w &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;random() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;MAX_SIZE;
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;h &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;random() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;MAX_SIZE;
+
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;intersecting &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;false;
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;; j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles.length; j&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;) {
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles[j];
+
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; test if rectangles intersect
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.w &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;w &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp;
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.h &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;h &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.y) {
+                intersecting &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;true;
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;break&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;;
+            }
+        }
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;intersecting) {
+            rectangles.push({x, y, w, h});
+        }
+    }
+
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles;
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;However this method does not naively extend to infinite spaces.
+You could divide the world into cells and generate each cell independently with each rectangle lying completely in one cell, but this creates a pretty obvious pattern at the border of the cells.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;canvas id=&quot;canvas_naive&quot; width=&quot;400&quot; height=&quot;400&quot;&gt;&lt;noscript&gt;&lt;img src=&quot;naive.png&quot; &#x2F;&gt;&lt;&#x2F;noscript&gt;&lt;&#x2F;canvas&gt;&lt;&#x2F;p&gt;
+&lt;script&gt;&#x2F;&#x2F; ---
+function generateNaive(x, y) {
+    let rectangles = generateCell(x + &quot;,&quot; + y + &quot;,&quot; + SEED);
+    let output = [];
+    for (let i = 0; i &lt; rectangles.length; i++) {
+        let r = rectangles[i];
+
+        &#x2F;&#x2F; remove the rectangles that overlap the border
+        if (r.x + r.w &lt; WIDTH &amp;&amp; r.y + r.h &lt; HEIGHT) {
+            &#x2F;&#x2F; translate the rectangle by the cell position
+            output.push({
+                x: r.x + WIDTH * x,
+                y: r.y + HEIGHT * y,
+                w: r.w,
+                h: r.h
+            });
+        }
+    }
+    return output;
+}
+&#x2F;&#x2F; ---
+
+window.addEventListener(&#x27;load&#x27;, function() {
+    WIDTH = 100;
+    HEIGHT = 100;
+    N = 100;
+
+    let rectangles = [];
+    for (let x = 0; x &lt; 4; x++) {
+        for (let y = 0; y &lt; 4; y++) {
+            rectangles = rectangles.concat(generateNaive(x, y));
+        }
+    }
+
+    let canvas = document.getElementById(&quot;canvas_naive&quot;);
+    let c = canvas.getContext(&quot;2d&quot;);
+
+    c.fillStyle = &quot;#888&quot;;
+
+    for (let i = 0; i &lt; rectangles.length; i++) {
+        let r = rectangles[i];
+        c.fillRect(
+            Math.floor(r.x),
+            Math.floor(r.y),
+            Math.floor(r.w),
+            Math.floor(r.h));
+    }
+});
+&lt;&#x2F;script&gt;
+&lt;pre style=&quot;background-color:#000000;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;generateNaive(x, y) {
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;generateCell(x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;&amp;quot;,&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;&amp;quot;,&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;SEED);
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;output &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;[];
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles.length; i&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;) {
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles[i];
+
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; remove the rectangles that overlap the border
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(r.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.w &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;WIDTH &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r.h &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;HEIGHT) {
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; translate the rectangle by the cell position
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;output.push({
+                x: r.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;WIDTH &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;x,
+                y: r.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;HEIGHT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y,
+                w: r.w,
+                h: r.h
+            });
+        }
+    }
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;output;
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Another method might be letting the rectangles overlap the cell borders and testing intersections with every previously generated cell, but this violates rule 1 as you can get different results based on which cell you generate first.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;canvas id=&quot;canvas_ordered&quot; width=&quot;630&quot; height=&quot;300&quot;&gt;&lt;noscript&gt;&lt;img src=&quot;ordered.png&quot;&gt;&lt;&#x2F;noscript&gt;&lt;&#x2F;canvas&gt;&lt;&#x2F;p&gt;
+&lt;script&gt;&#x2F;&#x2F; ---
+function generateOrdered(x, y, rectangles) {
+    let cell = generateCell(x + &quot;,&quot; + y + &quot;,&quot; + SEED);
+    for (let i = 0; i &lt; cell.length; i++) {
+        let r1 = cell[i];
+
+        &#x2F;&#x2F; translate the rectangle by the cell position
+        r1.x += x * WIDTH;
+        r1.y += y * HEIGHT;
+
+        &#x2F;&#x2F; test if new rectangles overlaps any previous one
+        &#x2F;&#x2F; (I know this can be done more efficiently)
+        let intersecting = false;
+        for (let j = 0; j &lt; rectangles.length; j++) {
+            let r2 = rectangles[j];
+
+            if (r1.x &lt;= r2.x + r2.w &amp;&amp; r1.x + r1.w &gt;= r2.x &amp;&amp;
+                r1.y &lt;= r2.y + r2.h &amp;&amp; r1.y + r1.h &gt;= r2.y) {
+                intersecting = true;
+                break;
+            }
+        }
+
+        if (!intersecting) {
+            rectangles.push(r1);
+        }
+    }
+}
+&#x2F;&#x2F; ---
+
+window.addEventListener(&#x27;load&#x27;, function() {
+    WIDTH = 150;
+    HEIGHT = 150;
+    N = 40;
+    MAX_SIZE = 100;
+
+    let canvas = document.getElementById(&quot;canvas_ordered&quot;);
+    let c = canvas.getContext(&quot;2d&quot;);
+
+    c.fillStyle = &quot;#888&quot;;
+
+    let state = 0;
+    let rectangles1 = [];
+    let rectangles2 = [];
+
+    function draw() {
+
+        for (let i = 0; i &lt; rectangles1.length; i++) {
+            let r = rectangles1[i];
+            r.w = Math.min(r.w, 2 * WIDTH - r.x);
+            c.fillRect(
+                Math.floor(r.x),
+                Math.floor(r.y),
+                Math.floor(r.w),
+                Math.floor(r.h));
+        }
+
+
+        for (let i = 0; i &lt; rectangles2.length; i++) {
+            let r = rectangles2[i];
+            c.fillRect(
+                Math.floor(r.x) + 2 * WIDTH + 30,
+                Math.floor(r.y),
+                Math.floor(r.w),
+                Math.floor(r.h));
+        }
+
+    }
+
+    function tick() {
+        switch (state) {
+            case 0:
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                SEED = Math.random();
+                rectangles1 = [];
+                rectangles2 = [];
+                generateOrdered(0, 0, rectangles1);
+                generateOrdered(0, 0, rectangles2);
+                break;
+            case 1:
+                generateOrdered(1, 0, rectangles1);
+                generateOrdered(0, 1, rectangles2);
+                break;
+            case 2:
+                generateOrdered(1, 1, rectangles1);
+                generateOrdered(1, 1, rectangles2);
+                break;
+            case 3:
+                generateOrdered(0, 1, rectangles1);
+                generateOrdered(1, 0, rectangles2);
+                break;
+        }
+        draw();
+        if (state == 3) {
+            state = 0;
+            setTimeout(tick, 3000);
+        } else {
+            state++;
+            setTimeout(tick, 1000);
+        }
+    }
+
+    tick();
+});
+
+&lt;&#x2F;script&gt;
+&lt;pre style=&quot;background-color:#000000;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;generateOrdered(x, y, rectangles) {
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;cell &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;generateCell(x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;&amp;quot;,&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;&amp;quot;,&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;SEED);
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;cell.length; i&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;) {
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;cell[i];
+
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; translate the rectangle by the cell position
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;WIDTH;
+        r1.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;HEIGHT;
+
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#888888;&quot;&gt;&#x2F;&#x2F; test if new rectangles overlaps any previous one
+        &#x2F;&#x2F; (I know this can be done more efficiently)
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;intersecting &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;false;
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff9800;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;; j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles.length; j&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;) {
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;let &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;rectangles[j];
+
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(r1.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2.w &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1.w &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2.x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp;
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;lt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2.h &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1.y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r1.h &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;&amp;gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;r2.y) {
+                intersecting &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;true;
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;break&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;;
+            }
+        }
+
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff2e88;&quot;&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#cccccc;&quot;&gt;intersecting) {
+            rectangles.push(r1);
+        }
+    }
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Finally one could solve this problem by defining an order in which the cells get generated (e.g. from the origin outwards). This violates rule 2 as cells that lie far away from the origin would take forever to generate, but it turns out that this approach can be modified to comply with rule 2.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;approach-1&quot;&gt;Approach 1&lt;&#x2F;h3&gt;
+&lt;p&gt;Instead of having a total ordering one can generate cells in a sort of checkerboard pattern. This means cells get computed in 4 steps (8 for the 3D case).&lt;&#x2F;p&gt;
+&lt;center&gt;&lt;pre&gt;
+0 1 0 1 0
+2 3 2 3 2
+0 1 0 1 0
+2 3 2 3 2
+0 1 0 1 0
+&lt;&#x2F;pre&gt;&lt;&#x2F;center&gt;
+&lt;p&gt;Each rectangle only needs to check for interesctions with neighbouring cells, which by definition of the pattern are not generated in the same step. As a result of this the output of a cell only depends on a finite ammount of cells to be generated previously and the algorithm runs in constant time.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>
